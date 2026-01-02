@@ -481,7 +481,7 @@
             toast.innerHTML = `
                 <i class="fas fa-${icon}"></i>
                 <div>${message}</div>
-                <button class="toast-close" onclick="this.parentElement.remove()">
+                <button class="toast-close" onclick="this.parentElement.remove()" style="background: none; border: none; cursor: pointer; margin-left: auto; color: #666;">
                     <i class="fas fa-times"></i>
                 </button>
             `;
@@ -538,7 +538,7 @@
                 
                 try {
                     // إرسال طلب تسجيل الدخول للسيرفر
-                    const response = await fetch('http://localhost:3000/api/auth/login', {
+                    const response = await fetch('/api/auth/login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -555,17 +555,27 @@
                         showToast('تم تسجيل الدخول بنجاح!', 'success');
                         
                         // حفظ التوكن والمستخدم في localStorage
-                        localStorage.setItem('token', result.data.token);
-                        localStorage.setItem('user', JSON.stringify(result.data.user));
+                        // تحقق إذا كان المستخدم أدمن
+                        if (result.data.user.email === 'admin@calmai.com') {
+                            localStorage.setItem('admin_token', result.data.token);
+                            localStorage.setItem('admin_user', JSON.stringify(result.data.user));
+                        } else {
+                            localStorage.setItem('token', result.data.token);
+                            localStorage.setItem('user', JSON.stringify(result.data.user));
+                        }
                         
                         // تذكرني
                         if (document.getElementById('remember').checked) {
                             localStorage.setItem('rememberMe', 'true');
                         }
                         
-                        // الانتقال للصفحة الرئيسية بعد ثانيتين
+                        // توجيه المستخدم بناءً على نوعه
                         setTimeout(() => {
-                            window.location.href = 'index.html';
+                            if (result.data.user.email === 'admin@calmai.com') {
+                                window.location.href = 'admin.html';
+                            } else {
+                                window.location.href = 'dashboard.html';
+                            }
                         }, 2000);
                     } else {
                         showToast(result.message || 'خطأ في تسجيل الدخول', 'error');
@@ -578,13 +588,23 @@
             });
             
             // محاولة التسجيل التلقائي إذا كان هناك توكن
-            const token = localStorage.getItem('token');
+            const token = localStorage.getItem('token') || localStorage.getItem('admin_token');
             const rememberMe = localStorage.getItem('rememberMe');
             
             if (token && rememberMe === 'true') {
                 // يمكن إضافة تسجيل دخول تلقائي هنا
                 document.getElementById('remember').checked = true;
             }
+            
+            // إضافة أنماط CSS للتدوير
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(style);
         });
     </script>
 </body>
