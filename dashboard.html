@@ -823,7 +823,142 @@
       </div>
     </section>
 
-    <!-- Other sections will be added similarly -->
+    <!-- Content Section -->
+    <section id="content-section" class="content-section">
+      <div class="section-header">
+        <h2><i class="fas fa-music"></i> <span id="content-header-ar">الموسيقى والتمارين</span>
+        <span id="content-header-en" style="display: none;">Music & Exercises</span></h2>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem;">
+        <div class="content-item" style="background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+          <div style="height: 150px; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-music" style="font-size: 3rem; color: white;"></i>
+          </div>
+          <div style="padding: 1.5rem;">
+            <h3 style="color: var(--dark-color); margin-bottom: 0.5rem;">موسيقى هادئة</h3>
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 1rem;">استمع إلى موسيقى هادئة تساعد على الاسترخاء</p>
+            <button class="btn btn-primary" style="width: 100%;">
+              <i class="fas fa-play"></i>
+              <span id="play-text-ar">تشغيل</span>
+              <span id="play-text-en" style="display: none;">Play</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="content-item" style="background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+          <div style="height: 150px; background: linear-gradient(135deg, var(--success-color), #5d8aa8); display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-running" style="font-size: 3rem; color: white;"></i>
+          </div>
+          <div style="padding: 1.5rem;">
+            <h3 style="color: var(--dark-color); margin-bottom: 0.5rem;">تمرين التنفس</h3>
+            <p style="color: #666; font-size: 0.9rem; margin-bottom: 1rem;">تمرين بسيط للتنفس العميق</p>
+            <button class="btn btn-primary" style="width: 100%;">
+              <i class="fas fa-play"></i>
+              <span id="start-text-ar">بدء</span>
+              <span id="start-text-en" style="display: none;">Start</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AI Chat Section -->
+    <section id="ai-chat-section" class="content-section">
+      <div class="section-header">
+        <h2><i class="fas fa-robot"></i> <span id="ai-chat-header-ar">محادثات الذكاء الاصطناعي</span>
+        <span id="ai-chat-header-en" style="display: none;">AI Chats</span></h2>
+      </div>
+      
+      <div style="background: white; border-radius: 10px; padding: 2rem; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+        <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+          <div style="flex: 1;">
+            <textarea id="ai-message" placeholder="اكتب رسالتك هنا..." style="width: 100%; padding: 1rem; border: 1px solid #ddd; border-radius: 8px; min-height: 100px; font-size: 1rem;"></textarea>
+          </div>
+          <div>
+            <button class="btn btn-primary" onclick="sendAIMessage()" style="height: fit-content; padding: 1rem 2rem;">
+              <i class="fas fa-paper-plane"></i>
+              <span id="send-text-ar">إرسال</span>
+              <span id="send-text-en" style="display: none;">Send</span>
+            </button>
+          </div>
+        </div>
+        
+        <div id="ai-chat-container" style="background: #f8fafc; border-radius: 8px; padding: 1rem; min-height: 200px; max-height: 400px; overflow-y: auto;">
+          <div style="text-align: center; color: #666; padding: 3rem;">
+            <i class="fas fa-robot" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+            <p id="ai-welcome-ar">مرحباً! أنا مساعدك الذكي. كيف يمكنني مساعدتك اليوم؟</p>
+            <p id="ai-welcome-en" style="display: none;">Hello! I'm your AI assistant. How can I help you today?</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings Section -->
+    <section id="settings-section" class="content-section">
+      <div class="section-header">
+        <h2><i class="fas fa-cog"></i> <span id="settings-header-ar">الإعدادات</span>
+        <span id="settings-header-en" style="display: none;">Settings</span></h2>
+      </div>
+      
+      <div style="background: white; border-radius: 10px; padding: 2rem; box-shadow: 0 3px 10px rgba(0,0,0,0.08);">
+        <div style="margin-bottom: 2rem;">
+          <h3 style="color: var(--dark-color); margin-bottom: 1rem;" id="account-settings-ar">إعدادات الحساب</h3>
+          <h3 style="color: var(--dark-color); margin-bottom: 1rem; display: none;" id="account-settings-en">Account Settings</h3>
+          
+          <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+            <div style="flex: 1;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;" id="language-label-ar">اللغة</label>
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; display: none;" id="language-label-en">Language</label>
+              <select id="language-select" style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 6px;">
+                <option value="ar">العربية</option>
+                <option value="en">English</option>
+              </select>
+            </div>
+            
+            <div style="flex: 1;">
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600;" id="notifications-label-ar">الإشعارات</label>
+              <label style="display: block; margin-bottom: 0.5rem; font-weight: 600; display: none;" id="notifications-label-en">Notifications</label>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <input type="checkbox" id="notifications-toggle" checked>
+                <label for="notifications-toggle" id="notifications-toggle-text-ar">مفعّل</label>
+                <label for="notifications-toggle" id="notifications-toggle-text-en" style="display: none;">Enabled</label>
+              </div>
+            </div>
+          </div>
+          
+          <button class="btn btn-primary" onclick="saveSettings()">
+            <i class="fas fa-save"></i>
+            <span id="save-settings-ar">حفظ الإعدادات</span>
+            <span id="save-settings-en" style="display: none;">Save Settings</span>
+          </button>
+        </div>
+        
+        <div>
+          <h3 style="color: var(--dark-color); margin-bottom: 1rem;" id="plan-settings-ar">إعدادات الخطة</h3>
+          <h3 style="color: var(--dark-color); margin-bottom: 1rem; display: none;" id="plan-settings-en">Plan Settings</h3>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+            <div style="border: 2px solid #e1e8f0; border-radius: 10px; padding: 1.5rem; text-align: center;">
+              <h4 style="color: var(--primary-color); margin-bottom: 1rem;">مجاني</h4>
+              <p style="color: #666; margin-bottom: 1rem;" id="free-plan-desc-ar">20 رسالة مجانية شهرياً</p>
+              <p style="color: #666; margin-bottom: 1rem; display: none;" id="free-plan-desc-en">20 free messages monthly</p>
+              <button class="btn btn-secondary" id="free-plan-btn-ar">الخطة الحالية</button>
+              <button class="btn btn-secondary" style="display: none;" id="free-plan-btn-en">Current Plan</button>
+            </div>
+            
+            <div style="border: 2px solid var(--primary-color); border-radius: 10px; padding: 1.5rem; text-align: center; background: #f8fbff;">
+              <h4 style="color: var(--primary-color); margin-bottom: 1rem;">محترف</h4>
+              <p style="color: #666; margin-bottom: 1rem;" id="pro-plan-desc-ar">رسائل غير محدودة</p>
+              <p style="color: #666; margin-bottom: 1rem; display: none;" id="pro-plan-desc-en">Unlimited messages</p>
+              <button class="btn btn-primary" id="pro-plan-btn-ar">ترقية</button>
+              <button class="btn btn-primary" style="display: none;" id="pro-plan-btn-en">Upgrade</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- JavaScript -->
@@ -844,8 +979,8 @@
     async function initializeDashboard() {
       try {
         // التحقق من تسجيل الدخول
-        const token = localStorage.getItem('calmai_token');
-        const user = JSON.parse(localStorage.getItem('calmai_user') || 'null');
+        const token = localStorage.getItem('admin_token') || localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('admin_user') || localStorage.getItem('user') || 'null');
         
         if (!token || !user) {
           window.location.href = '/login.html';
@@ -914,10 +1049,10 @@
     // تحميل بيانات الداشبورد
     async function loadDashboardData() {
       try {
-        const token = localStorage.getItem('calmai_token');
+        const token = localStorage.getItem('admin_token') || localStorage.getItem('token');
         
         // تحميل إحصائيات المستخدم
-        const userStatsResponse = await fetch('/api/user/stats', {
+        const userStatsResponse = await fetch('/api/users/stats', {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -932,7 +1067,7 @@
         
         // تحميل إحصائيات النظام (للمشرفين فقط)
         if (currentUser.email === 'admin@calmai.com') {
-          const systemStatsResponse = await fetch('/api/admin/stats', {
+          const systemStatsResponse = await fetch('/api/metrics/basic', {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -941,7 +1076,7 @@
           if (systemStatsResponse.ok) {
             const systemStatsData = await systemStatsResponse.json();
             if (systemStatsData.success) {
-              updateSystemStats(systemStatsData.data.stats);
+              updateSystemStats(systemStatsData.data.metrics);
             }
           }
           
@@ -959,6 +1094,8 @@
 
     // تحديث إحصائيات المستخدم
     function updateUserStats(stats) {
+      if (!stats) return;
+      
       // تحديث عدادات المستخدم
       document.getElementById('messages-count').textContent = 
         `${stats.messagesUsed || 0} رسالة`;
@@ -969,6 +1106,8 @@
 
     // تحديث إحصائيات النظام
     function updateSystemStats(stats) {
+      if (!stats) return;
+      
       // إجمالي المستخدمين
       document.getElementById('total-users-value').textContent = 
         stats.totalUsers || 0;
@@ -1008,8 +1147,10 @@
     // تهيئة المخططات
     function initializeCharts() {
       // مخطط نمو المستخدمين
-      const usersCtx = document.getElementById('usersChart').getContext('2d');
-      usersChart = new Chart(usersCtx, {
+      const usersCtx = document.getElementById('usersChart');
+      if (!usersCtx) return;
+      
+      usersChart = new Chart(usersCtx.getContext('2d'), {
         type: 'line',
         data: {
           labels: generateLast7Days(),
@@ -1043,8 +1184,10 @@
       });
 
       // مخطط نشاط الرسائل
-      const messagesCtx = document.getElementById('messagesChart').getContext('2d');
-      messagesChart = new Chart(messagesCtx, {
+      const messagesCtx = document.getElementById('messagesChart');
+      if (!messagesCtx) return;
+      
+      messagesChart = new Chart(messagesCtx.getContext('2d'), {
         type: 'bar',
         data: {
           labels: generateLast7Days(),
@@ -1079,6 +1222,8 @@
 
     // تحديث مخطط المستخدمين
     function updateUsersChart(period) {
+      if (!usersChart) return;
+      
       const days = period === '7d' ? 7 : period === '30d' ? 30 : 90;
       usersChart.data.labels = generateLastNDays(days);
       usersChart.data.datasets[0].data = generateRandomData(days, 10, 100);
@@ -1087,6 +1232,8 @@
 
     // تحديث مخطط الرسائل
     function updateMessagesChart(period) {
+      if (!messagesChart) return;
+      
       const days = period === '7d' ? 7 : period === '30d' ? 30 : 90;
       messagesChart.data.labels = generateLastNDays(days);
       messagesChart.data.datasets[0].data = generateRandomData(days, 50, 300);
@@ -1096,7 +1243,7 @@
     // تحميل المستخدمين
     async function loadUsers() {
       try {
-        const token = localStorage.getItem('calmai_token');
+        const token = localStorage.getItem('admin_token') || localStorage.getItem('token');
         const response = await fetch('/api/admin/users?page=1&limit=10', {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -1117,6 +1264,8 @@
     // تحديث جدول المستخدمين
     function updateUsersTable(users) {
       const tbody = document.getElementById('users-table-body');
+      if (!tbody) return;
+      
       tbody.innerHTML = '';
       
       if (!users || users.length === 0) {
@@ -1188,7 +1337,7 @@
       }
       
       try {
-        const token = localStorage.getItem('calmai_token');
+        const token = localStorage.getItem('admin_token') || localStorage.getItem('token');
         const response = await fetch(`/api/admin/users?search=${encodeURIComponent(query)}&page=1&limit=20`, {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -1209,7 +1358,7 @@
     // تحميل النشاطات الحديثة
     async function loadRecentActivities() {
       try {
-        const token = localStorage.getItem('calmai_token');
+        const token = localStorage.getItem('admin_token') || localStorage.getItem('token');
         const response = await fetch('/api/admin/activities?limit=10', {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -1230,6 +1379,8 @@
     // تحديث قائمة النشاطات
     function updateActivitiesList(activities) {
       const container = document.getElementById('recent-activities');
+      if (!container) return;
+      
       container.innerHTML = '';
       
       if (!activities || activities.length === 0) {
@@ -1276,7 +1427,8 @@
         ad_watched: 'fas fa-ad',
         content_viewed: 'fas fa-eye',
         exercise_completed: 'fas fa-running',
-        game_played: 'fas fa-gamepad'
+        game_played: 'fas fa-gamepad',
+        ad_clicked: 'fas fa-mouse-pointer'
       };
       
       return icons[type] || 'fas fa-circle';
@@ -1292,7 +1444,8 @@
         ad_watched: 'مشاهدة إعلان',
         content_viewed: 'عرض محتوى',
         exercise_completed: 'إكمال تمرين',
-        game_played: 'لعب لعبة'
+        game_played: 'لعب لعبة',
+        ad_clicked: 'النقر على إعلان'
       };
       
       const baseText = texts[type] || type;
@@ -1338,10 +1491,69 @@
       alert(`عرض معلومات المستخدم: ${userId}\n\nهذه الميزة قيد التطوير.`);
     }
 
+    // إرسال رسالة للذكاء الاصطناعي
+    function sendAIMessage() {
+      const messageInput = document.getElementById('ai-message');
+      const message = messageInput.value.trim();
+      
+      if (!message) {
+        showToast('الرجاء إدخال رسالة', 'warning');
+        return;
+      }
+      
+      const chatContainer = document.getElementById('ai-chat-container');
+      
+      // إضافة رسالة المستخدم
+      const userMessage = document.createElement('div');
+      userMessage.style.cssText = `
+        background: #5d8aa8;
+        color: white;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        max-width: 80%;
+        margin-left: auto;
+        text-align: left;
+      `;
+      userMessage.textContent = message;
+      chatContainer.appendChild(userMessage);
+      
+      // مسح حقل الإدخال
+      messageInput.value = '';
+      
+      // إضافة رسالة الرد (وهمية)
+      setTimeout(() => {
+        const aiMessage = document.createElement('div');
+        aiMessage.style.cssText = `
+          background: #f0f0f0;
+          color: #333;
+          padding: 1rem;
+          border-radius: 10px;
+          margin-bottom: 1rem;
+          max-width: 80%;
+          text-align: right;
+        `;
+        aiMessage.textContent = 'هذا رد وهمي من الذكاء الاصطناعي. في النسخة الحقيقية، سيتم الاتصال بخدمة الذكاء الاصطناعي.';
+        chatContainer.appendChild(aiMessage);
+        
+        // التمرير للأسفل
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }, 1000);
+    }
+
+    // حفظ الإعدادات
+    function saveSettings() {
+      const language = document.getElementById('language-select').value;
+      const notifications = document.getElementById('notifications-toggle').checked;
+      
+      // هنا يمكنك إضافة كود لحفظ الإعدادات في السيرفر
+      showToast('تم حفظ الإعدادات بنجاح', 'success');
+    }
+
     // تسجيل الخروج
     async function logout() {
       try {
-        const token = localStorage.getItem('calmai_token');
+        const token = localStorage.getItem('admin_token') || localStorage.getItem('token');
         await fetch('/api/auth/logout', {
           method: 'POST',
           headers: {
@@ -1351,8 +1563,10 @@
       } catch (error) {
         console.error('Error logging out:', error);
       } finally {
-        localStorage.removeItem('calmai_token');
-        localStorage.removeItem('calmai_user');
+        localStorage.removeItem('admin_token');
+        localStorage.removeItem('admin_user');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         window.location.href = '/';
       }
     }
