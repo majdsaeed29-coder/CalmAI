@@ -743,8 +743,8 @@ tr:hover {
  </div>
  
  <!-- شاشة المصادقة -->
- <div id="auth-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9998; display: flex; justify-content: center; align-items: center;">
-    <div style="width: 90%; max-width: 400px; padding: 2rem; background: #f8fafc; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+ <div id="auth-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9998;">
+    <div style="width: 90%; max-width: 400px; padding: 2rem; background: #f8fafc; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
         <h2 style="text-align: center; color: var(--primary-color); margin-bottom: 1.5rem;">تسجيل الدخول للوحة التحكم</h2>
         <div id="auth-message" style="color: #e74c3c; text-align: center; margin-bottom: 1rem; padding: 0.5rem; background: rgba(231, 76, 60, 0.1); border-radius: 5px; display: none;"></div>
         <input type="email" id="login-email" placeholder="البريد الإلكتروني" style="width: 100%; padding: 12px; margin-bottom: 1rem; border: 1px solid #ddd; border-radius: 5px; font-size: 1rem;">
@@ -1045,6 +1045,49 @@ tr:hover {
  <!-- باقي الأقسام (Subscription, AI Control, Content, Payment, Notifications, Settings) -->
  <!-- سيتم إضافتها بنفس النمط مع تعديلات للربط مع السيرفر -->
  
+ <!-- AI Control Section -->
+ <section id="ai-control-section" class="content-section">
+ <div class="section-header">
+ <h2><i class="fas fa-robot"></i><span class="section-title-ar">التحكم بالذكاء الاصطناعي</span><span class="section-title-en" style="display: none;">AI Control</span></h2>
+ </div>
+ <div class="form-card">
+ <h3><i class="fas fa-cogs"></i> <span class="section-title-ar">إعدادات الذكاء الاصطناعي</span><span class="section-title-en" style="display: none;">AI Settings</span></h3>
+ <div class="form-group">
+ <label class="section-title-ar">حالة النظام</label>
+ <label class="section-title-en" style="display: none;">System Status</label>
+ <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+ <button class="btn btn-success"><i class="fas fa-play"></i> <span class="section-title-ar">تفعيل</span><span class="section-title-en" style="display: none;">Activate</span></button>
+ <button class="btn btn-danger"><i class="fas fa-stop"></i> <span class="section-title-ar">إيقاف</span><span class="section-title-en" style="display: none;">Deactivate</span></button>
+ </div>
+ </div>
+ </div>
+ </section>
+
+ <!-- Content Section -->
+ <section id="content-section" class="content-section">
+ <div class="section-header">
+ <h2><i class="fas fa-plus-circle"></i><span class="section-title-ar">إضافة محتوى جديد</span><span class="section-title-en" style="display: none;">Add Content</span></h2>
+ </div>
+ <div class="form-card">
+ <h3><i class="fas fa-music"></i> <span class="section-title-ar">إضافة محتوى</span><span class="section-title-en" style="display: none;">Add Content</span></h3>
+ <div class="form-group">
+ <label class="section-title-ar">نوع المحتوى</label>
+ <label class="section-title-en" style="display: none;">Content Type</label>
+ <select class="form-control">
+ <option value="music">موسيقى</option>
+ <option value="exercise">تمرين</option>
+ <option value="game">لعبة</option>
+ </select>
+ </div>
+ <div class="form-group">
+ <label class="section-title-ar">عنوان المحتوى</label>
+ <label class="section-title-en" style="display: none;">Content Title</label>
+ <input type="text" class="form-control" placeholder="أدخل عنوان المحتوى">
+ </div>
+ <button class="btn btn-primary"><i class="fas fa-plus"></i> <span class="section-title-ar">إضافة</span><span class="section-title-en" style="display: none;">Add</span></button>
+ </div>
+ </section>
+
  </main>
  </div>
 
@@ -1076,7 +1119,7 @@ tr:hover {
  // عرض شاشة المصادقة
  function showAuthScreen() {
     document.getElementById('loading-screen').style.display = 'none';
-    document.getElementById('auth-screen').style.display = 'flex';
+    document.getElementById('auth-screen').style.display = 'block';
  }
 
  // عرض لوحة التحكم
@@ -1108,7 +1151,7 @@ tr:hover {
     }
     
     try {
-        const response = await fetch(`${window.location.origin}/api/auth/login`, {
+        const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -1142,7 +1185,7 @@ tr:hover {
         const token = localStorage.getItem('admin_token');
         
         // تحميل الإحصائيات
-        const statsResponse = await fetch(`${window.location.origin}/api/admin/stats`, {
+        const statsResponse = await fetch('/api/admin/stats', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -1156,7 +1199,7 @@ tr:hover {
         }
         
         // تحميل النشاطات
-        const activitiesResponse = await fetch(`${window.location.origin}/api/admin/activities`, {
+        const activitiesResponse = await fetch('/api/admin/activities', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -1179,6 +1222,8 @@ tr:hover {
 
  // تحديث إحصائيات لوحة التحكم
  function updateDashboardStats(stats) {
+    if (!stats) return;
+    
     document.getElementById('total-users').textContent = stats.totalUsers || 0;
     document.getElementById('active-users').textContent = stats.activeUsers || 0;
     document.getElementById('new-users').textContent = stats.newUsersToday || 0;
@@ -1235,7 +1280,7 @@ tr:hover {
  async function loadUsers() {
     try {
         const token = localStorage.getItem('admin_token');
-        const response = await fetch(`${window.location.origin}/api/admin/users?page=${currentPage}&limit=20`, {
+        const response = await fetch(`/api/admin/users?page=${currentPage}&limit=20`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -1519,7 +1564,8 @@ tr:hover {
             ad_watched: 'مشاهدة إعلان',
             content_viewed: 'عرض محتوى',
             exercise_completed: 'إكمال تمرين',
-            game_played: 'لعب لعبة'
+            game_played: 'لعب لعبة',
+            ad_clicked: 'النقر على إعلان'
         },
         en: {
             login: 'Login',
@@ -1529,7 +1575,8 @@ tr:hover {
             ad_watched: 'Ad watched',
             content_viewed: 'Content viewed',
             exercise_completed: 'Exercise completed',
-            game_played: 'Game played'
+            game_played: 'Game played',
+            ad_clicked: 'Ad clicked'
         }
     };
     
@@ -1565,7 +1612,7 @@ tr:hover {
  async function toggleBan(userId, isBanned) {
     try {
         const token = localStorage.getItem('admin_token');
-        const response = await fetch(`${window.location.origin}/api/admin/users/${userId}`, {
+        const response = await fetch(`/api/admin/users/${userId}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -1598,6 +1645,16 @@ tr:hover {
 
  // تشغيل التطبيق عند تحميل الصفحة
  document.addEventListener('DOMContentLoaded', init);
+
+ // إضافة أنماط CSS للتدوير
+ const style = document.createElement('style');
+ style.textContent = `
+ @keyframes spin {
+     0% { transform: rotate(0deg); }
+     100% { transform: rotate(360deg); }
+ }
+ `;
+ document.head.appendChild(style);
  </script>
 </body>
 </html>
