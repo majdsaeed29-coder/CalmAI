@@ -6,6 +6,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const { body, validationResult } = require('express-validator');
+const path = require('path');
 require('dotenv').config();
 
 // ============== إعداد التطبيق ==============
@@ -16,16 +17,27 @@ const PORT = process.env.PORT || 3000;
 app.use(helmet());
 
 // CORS - يسمح للنطاقات التالية فقط
-const allowedOrigins = ['http://localhost:3000', 'http://localhost:5500', 'http://127.0.0.1:5500'];
+const allowedOrigins = [
+  'http://localhost:3000', 
+  'http://localhost:5500', 
+  'http://127.0.0.1:5500',
+  'http://localhost:8080'
+];
+
 app.use(cors({
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+    // السماح لطلبات بدون origin (مثل Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
 // Rate Limiting - لمنع الهجمات
@@ -35,13 +47,18 @@ const limiter = rateLimit({
   message: {
     success: false,
     message: 'Too many requests, please try again later.'
-  }
+  },
+  standardHeaders: true,
+  legacyHeaders: false
 });
 app.use('/api/', limiter);
 
 // Body Parser
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// تقديم الملفات الثابتة من مجلد public
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ============== قاعدة البيانات ==============
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/calmai';
@@ -51,7 +68,10 @@ mongoose.connect(MONGODB_URI, {
   useUnifiedTopology: true
 })
 .then(() => console.log('✅ Connected to MongoDB'))
-.catch(err => console.error('❌ MongoDB connection error:', err));
+.catch(err => {
+  console.error('❌ MongoDB connection error:', err.message);
+  console.log('⚠️  Trying to continue without database...');
+});
 
 // ============== النماذج (Models) ==============
 
@@ -308,7 +328,7 @@ const activitySchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ['login', 'logout', 'signup', 'message_sent', 'ad_clicked', 'ad_watched', 'content_viewed']
+    enum: ['login', 'logout', 'signup', 'message_sent', 'ad_clicked', 'ad_watched', 'content_viewed', 'exercise_completed', 'game_played']
   },
   targetType: String,
   targetId: mongoose.Schema.Types.ObjectId,
@@ -430,6 +450,9 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.code === 11000) {
     statusCode = 409;
     message = 'Duplicate field value entered';
+  } else if (err.message === 'Not allowed by CORS') {
+    statusCode = 403;
+    message = 'CORS Error: Not allowed';
   }
   
   res.status(statusCode).json({
@@ -523,7 +546,7 @@ app.post('/api/auth/signup', [
       token,
       deviceInfo: {
         userAgent: req.headers['user-agent'],
-        ip: req.ip
+        ip: req.ip || req.connection.remoteAddress
       },
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 أيام
     });
@@ -534,7 +557,7 @@ app.post('/api/auth/signup', [
     const activity = new Activity({
       userId: user._id,
       type: 'signup',
-      ip: req.ip,
+      ip: req.ip || req.connection.remoteAddress,
       userAgent: req.headers['user-agent']
     });
     
@@ -601,7 +624,7 @@ app.post('/api/auth/login', [
       token,
       deviceInfo: {
         userAgent: req.headers['user-agent'],
-        ip: req.ip
+        ip: req.ip || req.connection.remoteAddress
       },
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 أيام
     });
@@ -616,7 +639,7 @@ app.post('/api/auth/login', [
     const activity = new Activity({
       userId: user._id,
       type: 'login',
-      ip: req.ip,
+      ip: req.ip || req.connection.remoteAddress,
       userAgent: req.headers['user-agent']
     });
     
@@ -652,7 +675,7 @@ app.post('/api/auth/logout', authMiddleware, async (req, res) => {
     const activity = new Activity({
       userId: req.user._id,
       type: 'logout',
-      ip: req.ip,
+      ip: req.ip || req.connection.remoteAddress,
       userAgent: req.headers['user-agent']
     });
     
@@ -746,7 +769,7 @@ app.post('/api/users/increment-message', authMiddleware, async (req, res) => {
     const activity = new Activity({
       userId: req.user._id,
       type: 'message_sent',
-      ip: req.ip,
+      ip: req.ip || req.connection.remoteAddress,
       userAgent: req.headers['user-agent']
     });
     
@@ -769,7 +792,7 @@ app.post('/api/users/watch-ad', authMiddleware, async (req, res) => {
     const activity = new Activity({
       userId: req.user._id,
       type: 'ad_watched',
-      ip: req.ip,
+      ip: req.ip || req.connection.remoteAddress,
       userAgent: req.headers['user-agent']
     });
     
@@ -803,10 +826,10 @@ app.get('/api/ads', authMiddleware, async (req, res) => {
     .limit(10);
     
     // زيادة عدد المشاهدات
-    ads.forEach(ad => {
+    await Promise.all(ads.map(async ad => {
       ad.impressions += 1;
-      ad.save();
-    });
+      await ad.save();
+    }));
     
     res.json(apiResponse(true, 'Ads retrieved', { ads }));
   } catch (error) {
@@ -843,7 +866,7 @@ app.post('/api/ads/:id/click', authMiddleware, async (req, res) => {
       type: 'ad_clicked',
       targetType: 'ad',
       targetId: ad._id,
-      ip: req.ip,
+      ip: req.ip || req.connection.remoteAddress,
       userAgent: req.headers['user-agent'],
       data: {
         adTitle: ad.title,
@@ -932,7 +955,7 @@ app.get('/api/content/:id', authMiddleware, async (req, res) => {
       type: 'content_viewed',
       targetType: 'content',
       targetId: content._id,
-      ip: req.ip,
+      ip: req.ip || req.connection.remoteAddress,
       userAgent: req.headers['user-agent'],
       data: {
         contentType: content.type,
@@ -1033,11 +1056,7 @@ app.post('/api/admin/ads', authMiddleware, adminMiddleware, [
       return res.status(400).json(apiResponse(false, 'Validation failed'));
     }
     
-    const adData = req.body;
-    adData.advertiserId = req.user._id;
-    adData.advertiserName = req.user.username;
-    
-    const ad = new Ad(adData);
+    const ad = new Ad(req.body);
     await ad.save();
     
     res.status(201).json(apiResponse(true, 'Ad created', { ad }));
@@ -1238,6 +1257,11 @@ app.use('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server is running on port ${PORT}`);
   console.log(`📁 API Base URL: http://localhost:${PORT}/api`);
+  console.log(`📂 Static files: http://localhost:${PORT}/`);
   console.log(`👤 Admin email: admin@calmai.com`);
   console.log(`🔑 Admin password: Admin123!`);
+  console.log(`🔄 Health check: http://localhost:${PORT}/health`);
+  console.log(`🔧 Init database: POST http://localhost:${PORT}/api/init`);
 });
+
+module.exports = app;
