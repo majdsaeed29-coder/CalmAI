@@ -721,14 +721,16 @@
                     // تحويل الأسماء العربية إلى إنجليزية (مبسط)
                     const arabicMap = {
                         'أحمد': 'ahmed', 'محمد': 'mohamed', 'علي': 'ali',
-                        'خالد': 'khaled', 'مريم': 'maryam', 'فاطمة': 'fatima'
+                        'خالد': 'khaled', 'مريم': 'maryam', 'فاطمة': 'fatima',
+                        'سارة': 'sara', 'يوسف': 'youssef', 'حسن': 'hassan',
+                        'ليلى': 'layla', 'عمر': 'omar', 'زينب': 'zainab'
                     };
                     
                     let engFirst = arabicMap[first] || first.replace(/[^a-z]/g, '');
                     let engLast = arabicMap[last] || last.replace(/[^a-z]/g, '');
                     
                     if (engFirst && engLast) {
-                        username.value = `${engFirst}_${engLast}`;
+                        username.value = `${engFirst}_${engLast}`.toLowerCase();
                     }
                 }
             }
@@ -750,7 +752,7 @@
             toast.innerHTML = `
                 <i class="fas fa-${icon}"></i>
                 <div>${message}</div>
-                <button class="toast-close" onclick="this.parentElement.remove()">
+                <button class="toast-close" onclick="this.parentElement.remove()" style="background: none; border: none; cursor: pointer; margin-left: auto; color: #666;">
                     <i class="fas fa-times"></i>
                 </button>
             `;
@@ -843,12 +845,26 @@
                     return;
                 }
                 
+                // التحقق من صحة البريد الإلكتروني
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(userData.email)) {
+                    showToast('بريد إلكتروني غير صحيح', 'error');
+                    return;
+                }
+                
+                // التحقق من سنة الميلاد
+                const currentYear = new Date().getFullYear();
+                if (userData.birthYear < 1900 || userData.birthYear > currentYear - 13) {
+                    showToast('سنة الميلاد غير صحيحة', 'error');
+                    return;
+                }
+                
                 // إظهار Loader
                 document.getElementById('loaderOverlay').style.display = 'flex';
                 
                 try {
                     // إرسال طلب التسجيل للسيرفر
-                    const response = await fetch('http://localhost:3000/api/auth/signup', {
+                    const response = await fetch('/api/auth/signup', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -870,7 +886,7 @@
                         
                         // الانتقال للصفحة الرئيسية بعد ثانيتين
                         setTimeout(() => {
-                            window.location.href = 'index.html';
+                            window.location.href = 'dashboard.html';
                         }, 2000);
                     } else {
                         showToast(result.message || 'خطأ في إنشاء الحساب', 'error');
@@ -881,6 +897,16 @@
                     console.error('Signup error:', error);
                 }
             });
+            
+            // إضافة أنماط CSS للتدوير
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(style);
         });
     </script>
 </body>
